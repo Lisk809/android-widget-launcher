@@ -1,0 +1,139 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload Debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: widget-launcher-debug-${{ github.sha }}
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+  release:
+    name: Create Release APK
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # ── 签名配置（可选）──────────────────────────────────────────────────────
+      # 如果要发布签名 APK，在仓库 Settings → Secrets and variables → Actions 中添加：
+      #   KEYSTORE_BASE64   — base64 编码的 .jks 文件内容
+      #   KEY_ALIAS         — keystore 别名
+      #   KEY_PASSWORD      — key 密码
+      #   STORE_PASSWORD    — keystore 密码
+      # 然后取消注释下面的签名步骤。
+      # ─────────────────────────────────────────────────────────────────────────
+
+      # - name: Decode keystore
+      #   run: |
+      #     echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+
+      # - name: Build Release APK (signed)
+      #   run: |
+      #     ./gradlew assembleRelease \
+      #       -Pandroid.injected.signing.store.file=${{ github.workspace }}/keystore.jks \
+      #       -Pandroid.injected.signing.store.password=${{ secrets.STORE_PASSWORD }} \
+      #       -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+      #       -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }} \
+      #       --no-daemon
+
+      - name: Build Release APK (unsigned)
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Get tag name
+        id: tag
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.TAG }}
+          name: Widget Launcher ${{ steps.tag.outputs.TAG }}
+          body: |
+            ## Widget Launcher ${{ steps.tag.outputs.TAG }}
+
+            Android 桌面组件应用 — 支持自定义 HTML/CSS/JS 前端组件
+
+            ### 安装
+            1. 下载下方的 APK 文件
+            2. 在 Android 设备上允许"安装未知来源应用"
+            3. 安装并打开
+
+            ### 功能
+            - 支持 Vanilla JS / Vue 3 / React 18 自定义组件
+            - 内置代码编辑器 + 实时预览
+            - 7 个开箱即用模板（时钟、天气、待办、番茄钟、加密货币…）
+            - AndroidBridge JS ↔ Kotlin 通信接口
+            - 组件持久化存储
+
+            ### 要求
+            - Android 7.0 (API 24) 及以上
+          files: |
+            app/build/outputs/apk/release/app-release-unsigned.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

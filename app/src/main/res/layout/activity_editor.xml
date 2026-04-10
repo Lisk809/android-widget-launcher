@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/background"
+            app:title="Widget Editor"
+            app:titleTextColor="@color/text_primary"
+            app:navigationIcon="@drawable/ic_back" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/background"
+            app:tabTextColor="@color/text_secondary"
+            app:tabSelectedTextColor="@color/indigo_300"
+            app:tabIndicatorColor="@color/indigo_500"
+            app:tabRippleColor="@color/surface">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Code Editor" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Preview" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Scrollable editor panel -->
+        <ScrollView
+            android:id="@+id/scrollEditor"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Widget Name -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/widget_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="@color/border"
+                    app:hintTextColor="@color/text_secondary">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_primary"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Framework selection -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="FRAMEWORK"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioGroup
+                    android:id="@+id/rgFramework"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton android:id="@+id/rbVanilla" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vanilla" android:textColor="@color/text_primary" android:checked="true" />
+                    <RadioButton android:id="@+id/rbVue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vue 3" android:textColor="@color/text_primary" android:layout_marginStart="16dp" />
+                    <RadioButton android:id="@+id/rbReact" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="React 18" android:textColor="@color/text_primary" android:layout_marginStart="16dp" />
+
+                </RadioGroup>
+
+                <!-- Size selection -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SIZE"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioGroup
+                    android:id="@+id/rgSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton android:id="@+id/rbSmall" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1×1" android:textColor="@color/text_primary" />
+                    <RadioButton android:id="@+id/rbMedium" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2×1" android:textColor="@color/text_primary" android:layout_marginStart="12dp" android:checked="true" />
+                    <RadioButton android:id="@+id/rbLarge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2×2" android:textColor="@color/text_primary" android:layout_marginStart="12dp" />
+                    <RadioButton android:id="@+id/rbWide" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4×1" android:textColor="@color/text_primary" android:layout_marginStart="12dp" />
+
+                </RadioGroup>
+
+                <!-- Code editor -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="HTML / CSS / JS"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.1"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/etCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="300dp"
+                    android:background="@color/surface"
+                    android:padding="12dp"
+                    android:textColor="#e2e8f0"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:gravity="top|start"
+                    android:scrollbars="vertical"
+                    android:textCursorDrawable="@null" />
+
+                <!-- Action buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
+                    android:gravity="end"
+                    android:gap="8dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRefresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preview"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="@color/border" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSave"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save Widget"
+                        app:backgroundTint="@color/indigo_500" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- WebView preview panel (hidden by default) -->
+        <WebView
+            android:id="@+id/webPreview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
