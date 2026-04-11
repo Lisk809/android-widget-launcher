@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
-import android.webkit.WebView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
@@ -21,6 +20,27 @@ class EditorActivity : AppCompatActivity() {
         const val EXTRA_TEMPLATE_CODE = "template_code"
         const val EXTRA_TEMPLATE_NAME = "template_name"
         const val EXTRA_TEMPLATE_FRAMEWORK = "template_framework"
+
+        val DEFAULT_HTML = """
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+  display: flex; align-items: center; justify-content: center;
+  height: 100vh; font-family: -apple-system, sans-serif; color: white;
+}
+h1 { font-size: 24px; font-weight: 300; }
+</style>
+</head>
+<body>
+<h1>Hello Widget!</h1>
+</body>
+</html>
+        """.trimIndent()
     }
 
     private lateinit var binding: ActivityEditorBinding
@@ -51,8 +71,11 @@ class EditorActivity : AppCompatActivity() {
     private fun setupUI() {
         val widget = existingWidget
 
-        binding.etName.setText(widget?.name ?: intent.getStringExtra(EXTRA_TEMPLATE_NAME) ?: "My Widget")
-        binding.etCode.setText(widget?.code ?: intent.getStringExtra(EXTRA_TEMPLATE_CODE) ?: DEFAULT_HTML)
+        val nameText: CharSequence = widget?.name ?: intent.getStringExtra(EXTRA_TEMPLATE_NAME) ?: "My Widget"
+        val codeText: CharSequence = widget?.code ?: intent.getStringExtra(EXTRA_TEMPLATE_CODE) ?: DEFAULT_HTML
+        binding.etName.setText(nameText)
+        binding.etCode.setText(codeText)
+
         currentFramework = widget?.framework ?: WidgetFramework.VANILLA
         currentSize = widget?.size ?: WidgetSize.MEDIUM
 
@@ -96,10 +119,7 @@ class EditorActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
-        // Refresh preview button
         binding.btnRefresh.setOnClickListener { refreshPreview() }
-
-        // Save button
         binding.btnSave.setOnClickListener { saveWidget() }
     }
 
@@ -164,28 +184,5 @@ class EditorActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
-    }
-
-    companion object {
-        private val DEFAULT_HTML = """
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: linear-gradient(135deg, #1e1b4b, #312e81);
-  display: flex; align-items: center; justify-content: center;
-  height: 100vh; font-family: -apple-system, sans-serif; color: white;
-}
-h1 { font-size: 24px; font-weight: 300; }
-</style>
-</head>
-<body>
-<h1>Hello Widget!</h1>
-</body>
-</html>
-        """.trimIndent()
     }
 }

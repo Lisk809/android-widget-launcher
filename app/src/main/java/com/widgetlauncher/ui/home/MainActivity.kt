@@ -8,7 +8,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.FlexboxLayoutManager
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.widgetlauncher.R
 import com.widgetlauncher.data.Widget
 import com.widgetlauncher.data.WidgetRepository
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repository: WidgetRepository
     private lateinit var adapter: WidgetAdapter
 
-    private val cellSizeDp = 80 // Each grid cell is 80dp
+    private val cellSizeDp = 80
     private val gapDp = 8
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -117,12 +117,12 @@ body {
 <div class="date" id="date"></div>
 <script>
 function update() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2,'0');
+  var m = String(now.getMinutes()).padStart(2,'0');
   document.getElementById('time').innerHTML = h + '<span class="dot">:</span>' + m;
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   document.getElementById('date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
 }
 update(); setInterval(update, 1000);
@@ -159,10 +159,18 @@ button { background:#22c55e; color:#0f172a; border:none; border-radius:6px; padd
 </div>
 <div id="list"></div>
 <script>
-let tasks=JSON.parse(localStorage.getItem('t')||'[{"text":"Buy groceries","done":false},{"text":"Call dentist","done":true}]');
+var tasks=JSON.parse(localStorage.getItem('t')||'[{"text":"Buy groceries","done":false},{"text":"Call dentist","done":true}]');
 function save(){localStorage.setItem('t',JSON.stringify(tasks));}
-function render(){document.getElementById('list').innerHTML=tasks.map((t,i)=>`<div class="item"><div class="check ${t.done?'done':''}" onclick="toggle(${i})"></div><span class="text ${t.done?'done':''}">${t.text}</span><span class="del" onclick="del(${i})">×</span></div>`).join('');}
-function add(){const v=document.getElementById('inp').value.trim();if(!v)return;tasks.unshift({text:v,done:false});save();render();document.getElementById('inp').value='';}
+function render(){
+  document.getElementById('list').innerHTML=tasks.map(function(t,i){
+    return '<div class="item">' +
+      '<div class="check ' + (t.done?'done':'') + '" onclick="toggle(' + i + ')"></div>' +
+      '<span class="text ' + (t.done?'done':'') + '">' + t.text + '</span>' +
+      '<span class="del" onclick="del(' + i + ')">x</span>' +
+      '</div>';
+  }).join('');
+}
+function add(){var v=document.getElementById('inp').value.trim();if(!v)return;tasks.unshift({text:v,done:false});save();render();document.getElementById('inp').value='';}
 function toggle(i){tasks[i].done=!tasks[i].done;save();render();}
 function del(i){tasks.splice(i,1);save();render();}
 render();
@@ -190,10 +198,19 @@ body { background:#0c0a09; height:100vh; font-family:'Courier New',monospace; co
 <body>
 <div id="coins"></div>
 <script>
-const data=[{sym:'BTC',price:67240,change:2.3},{sym:'ETH',price:3820,change:-1.1},{sym:'SOL',price:178,change:5.7},{sym:'BNB',price:412,change:0.8}];
+var data=[{sym:'BTC',price:67240,change:2.3},{sym:'ETH',price:3820,change:-1.1},{sym:'SOL',price:178,change:5.7},{sym:'BNB',price:412,change:0.8}];
 function fmt(n){return n>=1000?'$'+(n/1000).toFixed(1)+'k':('$'+n.toFixed(0));}
-function render(){document.getElementById('coins').innerHTML=data.map(c=>{const cls=c.change>=0?'up':'down';return `<div class="coin"><div class="sym">${c.sym}</div><div class="price">${fmt(c.price)}</div><span class="change ${cls}">${c.change>=0?'+':''}${c.change}%</span></div>`;}).join('');}
-function tick(){data.forEach(c=>{c.price=Math.max(1,c.price+(Math.random()-0.48)*c.price*0.002);c.change=+(c.change+(Math.random()-0.5)*0.2).toFixed(2);});render();}
+function render(){
+  document.getElementById('coins').innerHTML=data.map(function(c){
+    var cls=c.change>=0?'up':'down';
+    return '<div class="coin">' +
+      '<div class="sym">' + c.sym + '</div>' +
+      '<div class="price">' + fmt(c.price) + '</div>' +
+      '<span class="change ' + cls + '">' + (c.change>=0?'+':'') + c.change + '%</span>' +
+      '</div>';
+  }).join('');
+}
+function tick(){data.forEach(function(c){c.price=Math.max(1,c.price+(Math.random()-0.48)*c.price*0.002);c.change=+(c.change+(Math.random()-0.5)*0.2).toFixed(2);});render();}
 render();setInterval(tick,2000);
 </script>
 </body>
