@@ -81,12 +81,6 @@ class WidgetAdapter(
         }
     }
 
-    override fun onRecycledViewHolder(holder: WidgetViewHolder, isReleaseCallback: Boolean) {
-        super.onDetachedFromRecyclerView(
-            holder.itemView.parent as? RecyclerView ?: return
-        )
-    }
-
     override fun getItemCount() = widgets.size
 
     fun cleanup() {
